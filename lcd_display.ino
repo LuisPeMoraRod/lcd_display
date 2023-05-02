@@ -12,6 +12,7 @@ int b5=7;
 int b6=8;
 int b7=9;
 int b8=10;
+int a0 = A0;
 void setup()
 {
   pinMode(b0,INPUT);
@@ -23,6 +24,7 @@ void setup()
   pinMode(b6,INPUT);
   pinMode(b7,INPUT);
   pinMode(b8,INPUT);
+  pinMode(a0, INPUT);
 
 	// initialize the LCD
 	lcd.init();
@@ -44,12 +46,14 @@ void loop()
   bool b7_p=digitalRead(b7);
   bool scale = digitalRead(b8);
   
-  float byte = b0_p+2*b1_p+4*b2_p+8*b3_p+16*b4_p+32*b5_p+64*b6_p+128*b7_p;
-  
+  float v = b0_p+2*b1_p+4*b2_p+8*b3_p+16*b4_p+32*b5_p+64*b6_p+128*b7_p;
 
-  byte =  ((byte*10)/255)/2;
+  int refValue = analogRead(a0);
+  float vRef = refValue * (5.0 / 1023.0);
+
+  v =  v * (vRef / 255.0) * 2.0;
 
 	lcd.clear();
-  lcd.print("Voltaje es: "+String(byte));
-  delay(500);
+  lcd.print("Voltaje es: "+String(v));
+  delay(100);
 }
