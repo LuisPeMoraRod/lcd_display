@@ -39,7 +39,8 @@ void loop()
   bool scale = digitalRead(b8);
   
   float v = b0_p+2*b1_p+4*b2_p+8*b3_p+16*b4_p+32*b5_p+64*b6_p+128*b7_p;
-
+ 
+  
   int refValue = analogRead(a0);
   float vRef = refValue * (5.0 / 1023.0);
 
@@ -47,6 +48,9 @@ void loop()
   if (scale == HIGH){
     decimals = 3;
     v =  v * (vRef / 255.0) * 2.0;
+    if ((v > 0.5) && (v < 9.5)){
+      v += 0.4;
+    }
     voltage = String(v, decimals) + " V";
   } else { //0-100 V scale
     decimals = 2;
