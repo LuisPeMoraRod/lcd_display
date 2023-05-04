@@ -1,8 +1,3 @@
-#include <Wire.h> 
-#include <LiquidCrystal_I2C.h>
-
-// Set the LCD address to 0x27 for a 16 chars and 2 line display
-LiquidCrystal_I2C lcd(0x27, 16, 2);
 int b0=2;
 int b1=3;
 int b2=4;
@@ -13,6 +8,8 @@ int b6=8;
 int b7=9;
 int b8=10;
 int a0 = A0;
+int decimals = 3;
+String voltage;
 void setup()
 {
   pinMode(b0,INPUT);
@@ -26,11 +23,6 @@ void setup()
   pinMode(b8,INPUT);
   pinMode(a0, INPUT);
 
-	// initialize the LCD
-	lcd.init();
-  
-	// Turn on the blacklight and print a message.
-	lcd.backlight();
   Serial.begin(9600);
 }
 
@@ -51,9 +43,22 @@ void loop()
   int refValue = analogRead(a0);
   float vRef = refValue * (5.0 / 1023.0);
 
-  v =  v * (vRef / 255.0) * 2.0;
+  // 0-10 V scale
+  if (scale == HIGH){
+    decimals = 3;
+    v =  v * (vRef / 255.0) * 2.0;
+    voltage = String(v, decimals) + " V";
+  } else { //0-100 V scale
+    decimals = 2;
+    v =  v * (vRef / 255.0) * 20.0;
+    if (v < 10.0){
+      voltage = "0" + String(v, decimals) + " V";
+    }
+    else {
+      voltage = String(v, decimals) + " V";
+    }
+  }
 
-	lcd.clear();
-  lcd.print("Voltaje es: "+String(v));
-  delay(100);
+  Serial.println(voltage);  
+  delay(500);
 }
